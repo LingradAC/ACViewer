@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
@@ -169,6 +170,8 @@ namespace ACViewer
             R_Landblock r_landblock = null;
             R_Landblock centerBlock = null;
 
+            List<string> landblockIDList = new List<string>(); // Landblock ID exporting
+
             for (var lbx = (uint)startBlock.X; lbx <= endBlock.X; lbx++)
             {
                 if (lbx < 0 || lbx > 254) continue;
@@ -189,11 +192,16 @@ namespace ACViewer
                     if (lbid == landblockID)
                         centerBlock = r_landblock;
 
+                    landblockIDList.Add($"{lbid:x8}"); // Landblock ID exporting
+
                     MainWindow.Status.WriteLine($"Loaded {lbid:X8} in {timer.Elapsed.TotalMilliseconds}ms");
 
                     //Landblocks.Add(lbid, new R_Landblock(landblock));
                 }
             }
+
+            File.WriteAllLines("LandblockIDs.txt", landblockIDList);
+            MainWindow.Status.WriteLine($"Landblock IDs exported.");
 
             Render.Buffer.BuildBuffers();
             Render.InitEmitters();
